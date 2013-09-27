@@ -1,0 +1,17 @@
+name: automation
+file: automation.py
+description: StackOps Automation Component
+
+Services:
+    - name: install
+      description: Install StackOps accounting
+      methods:
+          - install
+    - name: configure
+      description: Configure the service
+      methods:
+          - configure
+    - name: start
+      description: Start the service
+      methods:
+          - start
