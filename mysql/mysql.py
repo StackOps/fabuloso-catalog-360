@@ -124,6 +124,10 @@ def setup_accounting(root_pass='stackops', accounting_user='activity',
     setup_schema(username=accounting_user, password=accounting_password,
                  schema_name='activity', root_pass=root_pass)
 
+def setup_chargeback(root_pass='stackops', chargeback_user='chargeback',
+                     chargeback_password='stackops'):
+    setup_schema(username=chargeback_user, password=chargeback_password,
+                 schema_name='chargeback', root_pass=root_pass)
 
 def setup_automation(root_pass='stackops', automation_user='automation',
                      automation_password='stackops'):
@@ -151,6 +155,9 @@ def configure_all_schemas(root_pass='stackops', password='stackops',
                  root_pass=root_pass,
                  password=password, drop_previous=False, mysql_host=mysql_host)
     setup_schema(username='accounting', schema_name='accounting',
+                 root_pass=root_pass,
+                 password=password, drop_previous=False, mysql_host=mysql_host)
+    setup_schema(username='chargeback', schema_name='chargeback',
                  root_pass=root_pass,
                  password=password, drop_previous=False, mysql_host=mysql_host)
     setup_schema(username='automation', schema_name='automation',

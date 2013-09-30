@@ -44,12 +44,12 @@ keystone = {
     'tenant_name': 'service',
     'region': 'RegionOne',
     'endpoint': 'http://' + single_automation['host'] + ':35357/v2.0',
-    'ks_public_url': 'http://' + single_automation['host'] + '/keystone/v2.0',
+    'ks_public_url': 'https://' + single_automation['host'] + '/keystone/v2.0',
     'ks_admin_url': 'http://' + single_automation['host'] + ':35357/v2.0',
     'ks_internal_url': 'http://' + single_automation['host'] + ':5000/v2.0',
     'ks_user': 'keystone',
     'ks_password': 'stackops',
-    'nova_public_url': 'http://' + single_automation['host'] +
+    'nova_public_url': 'https://' + single_automation['host'] +
                        '/compute/v1.1/$(tenant_id)s',
     'nova_admin_url': 'http://' + single_automation['host']
                       + ':8774/v1.1/$(tenant_id)s',
@@ -58,21 +58,21 @@ keystone = {
                          + ':8774/v1.1/$(tenant_id)s',
     'nova_user': 'nova',
     'nova_password': 'stackops',
-    'ec2_public_url': 'http://' + single_automation['host'] + '/services/Cloud',
+    'ec2_public_url': 'https://' + single_automation['host'] + '/services/Cloud',
     'ec2_admin_url': 'http://' + single_automation['host'] + '/services/Admin',
     'ec2_internal_url': 'http://' + single_automation['host'] + '/services/Cloud',
     'glance_port': '9292',
-    'glance_public_url': 'http://' + single_automation['host'] + '/glance/v1',
+    'glance_public_url': 'https://' + single_automation['host'] + '/glance/v1',
     'glance_admin_url': 'http://' + single_automation['host'] + ':9292/v1',
     'glance_internal_url': 'http://' + single_automation['host'] + ':9292/v1',
     'glance_user': 'glance',
     'glance_password': 'stackops',
-    'quantum_public_url': 'http://' + single_automation['host'] + '/network',
+    'quantum_public_url': 'https://' + single_automation['host'] + '/network',
     'quantum_admin_url': 'http://' + single_automation['host'] + ':9696',
     'quantum_internal_url': 'http://' + single_automation['host'] + ':9696',
     'quantum_user': 'quantum',
     'quantum_password': 'stackops',
-    'cinder_public_url': 'http://' + single_automation['host'] +
+    'cinder_public_url': 'https://' + single_automation['host'] +
                          '/volume/v1/$(tenant_id)s',
     'cinder_admin_url': 'http://' + single_automation['host'] +
                         ':8776/v1/$(tenant_id)s',
@@ -81,20 +81,26 @@ keystone = {
                            ':8776/v1/$(tenant_id)s',
     'cinder_user': 'cinder',
     'cinder_password': 'stackops',
-    'portal_public_url': 'http://' + single_automation['host'] + '/portal',
+    'portal_public_url': 'https://' + single_automation['host'] + '/portal',
     'portal_admin_url': 'http://' + single_automation['host'] + ':8080/portal',
     'portal_internal_url': 'http://' + single_automation['host'] + ':8080/portal',
     'portal_user': 'portal',
     'portal_password': 'stackops',
-    'accounting_public_url': 'http://' + single_automation['host'] + '/activity',
+    'accounting_public_url': 'https://' + single_automation['host'] + '/activity',
     'accounting_admin_url': 'http://' + single_automation['host']
                             + ':8080/activity',
     'accounting_internal_url': 'http://' + single_automation['host']
                                + ':8080/activity',
     'accounting_user': 'activity',
     'accounting_password': 'stackops',
-    'automation_public_url': 'http://' + single_automation['host']
-                             + ':8089/v1.1',
+    'chargeback_public_url': 'https://' + single_automation['host'] + '/chargeback',
+    'chargeback_admin_url': 'http://' + single_automation['host']
+                            + ':8080/chargeback',
+    'chargeback_internal_url': 'http://' + single_automation['host']
+                               + ':8080/chargeback',
+    'chargeback_user': 'chargeback',
+    'chargeback_password': 'stackops',
+    'automation_public_url': 'https://' + single_automation['host'] + '/automation',
     'automation_admin_url': 'http://' + single_automation['host']
                             + ':8089/v1.1',
     'automation_internal_url': 'http://' + single_automation['host']
@@ -121,7 +127,9 @@ apache = {
     'cinder_internal_url': keystone['cinder_internal_config'],
     'quantum_internal_url': keystone['quantum_internal_url'],
     'portal_internal_url': keystone['portal_internal_url'],
-    'activity_internal_url': keystone['accounting_internal_url']
+    'activity_internal_url': keystone['accounting_internal_url'],
+    'chargeback_internal_url': keystone['chargeback_internal_url'],
+    'automation_internal_url': keystone['automation_internal_url']
 }
 
 automation = {

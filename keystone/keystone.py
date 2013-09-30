@@ -157,11 +157,11 @@ def configure_users(endpoint="'http://localhost:35357/v2.0'",
     activity_admin_role = _create_role(endpoint, admin_token,
                                        'ROLE_ACTIVITY_ADMIN')
     activity_user_role = _create_role(endpoint, admin_token,
-                                      'ROLE_ACTIVITY_USER')
+                                      'ROLE_ACTIVITY')
     chargeback_admin_role = _create_role(endpoint, admin_token,
                                          'ROLE_CHARGEBACK_ADMIN')
     chargeback_user_role = _create_role(endpoint, admin_token,
-                                        'ROLE_CHARGEBACK_USER')
+                                        'ROLE_CHARGEBACK')
     accounting_user_role = _create_role(endpoint, admin_token,
                                         'ROLE_ACCOUNTING')
     automation_user_role = _create_role(endpoint, admin_token,
@@ -340,6 +340,22 @@ def define_accounting_service(admin_token='password', region='RegionOne',
     _create_user_for_service(endpoint, accounting_user, admin_token,
                              accounting_password, 'service')
 
+def define_chargeback_service(admin_token='password', region='RegionOne',
+                              endpoint="'http://localhost:35357/v2.0'",
+                              chargeback_public_url="'http://localhost/"
+                                                    "chargeback'",
+                              chargeback_internal_url="'http://localhost:8080/"
+                                                      "chargeback'",
+                              chargeback_admin_url="'http://localhost:8080/"
+                                                   "chargeback'",
+                              chargeback_user='chargeback',
+                              chargeback_password='stackops'):
+    _create_service(admin_token, 'chargeback', 'chargeback',
+                    'StackOps chargeback '
+                    'service', region, endpoint, chargeback_public_url,
+                    chargeback_internal_url, chargeback_admin_url)
+    _create_user_for_service(endpoint, chargeback_user, admin_token,
+                             chargeback_password, 'service')
 
 def define_automation_service(admin_token='password', region='RegionOne',
                               endpoint="'http://localhost:35357/v2.0'",
