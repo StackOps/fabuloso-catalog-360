@@ -163,15 +163,13 @@ def no_framebuffer():
     sudo('sed -i /vga16fb/d /etc/modprobe.d/blacklist-framebuffer.conf ')
     sudo('echo "blacklist vga16fb" >> /etc/modprobe.d/blacklist-framebuffer.conf ')
 
-@task
-def change_hostname(new_hostname):
+def change_hostname(hostname):
     """Modify the hostname of the server"""
     current_hostname = run('hostname')
-    sudo('echo "%s" > /etc/hostname' % new_hostname)
-    sudo("sed -i 's/%s/%s/g' /etc/hosts" %(current_hostname, new_hostname))
-    sudo("hostname %s" % new_hostname)
+    sudo('echo "%s" > /etc/hostname' % hostname)
+    sudo("sed -i 's/%s/%s/g' /etc/hosts" %(current_hostname, hostname))
+    sudo("hostname %s" % hostname)
 
-@task
 def add_nova_user():
     """Add nova users and groups if they don't exists in the
        operating system"""
@@ -179,7 +177,6 @@ def add_nova_user():
     user_ensure('nova', home='/var/lib/nova', uid=201, gid=201,
                 shell='/bin/false')
 
-@task
 def add_glance_user():
     """Add glance users and groups if they don't exists in the
        operating system"""
@@ -204,7 +201,6 @@ def remove_repos():
     sudo('rm  -f /etc/apt/sources.list.d/stackops.list')
     sudo('apt-get -y update')
 
-@task
 def add_repos():
     """Clean and Add necessary repositories and updates"""
     sudo('sed -i /precise-updates/d /etc/apt/sources.list')

@@ -16,37 +16,31 @@
 from fabric.api import *
 from cuisine import *
 
-import utils
+#import utils
 
-@task
 def stop():
     with settings(warn_only=True):
         sudo("nohup service apache2 stop")
 
 
-@task
 def start():
     stop()
     sudo("nohup service apache2 start")
 
 
-@task
 def configure_ubuntu_packages():
     """Configure apache packages"""
     package_ensure('apache2')
 
 
-@task
 def uninstall_ubuntu_packages():
     """Uninstall apache packages"""
     package_clean('iptables-persistent')
     package_clean('apache2')
 
-@task
 def install():
     configure_ubuntu_packages()
 
-@task
 def configure(cluster=False, keystone_host="127.0.0.1",
               ec2_internal_url="http://127.0.0.1:8773/services/Cloud",
               compute_internal_url="http://127.0.0.1:8774/v1.1",
@@ -81,7 +75,6 @@ def configure(cluster=False, keystone_host="127.0.0.1",
     start()
 
 
-@task
 def configure_apache(ec2_internal_url="http://127.0.0.1:8773/services/Cloud",
                      compute_internal_url="http://127.0.0.1:8774/v1.1",
                      keystone_internal_url="http://127.0.0.1:5000/v2.0",
@@ -127,7 +120,7 @@ def configure_apache(ec2_internal_url="http://127.0.0.1:8773/services/Cloud",
         |   ProxyPass /activity %s
         |   ProxyPassReverse /activity %s
         |
-	    |   ProxyPass /accounting %s
+	|   ProxyPass /accounting %s
         |   ProxyPassReverse /accounting %s
         |
         |   ProxyPass /chargeback %s
@@ -164,7 +157,6 @@ def configure_apache(ec2_internal_url="http://127.0.0.1:8773/services/Cloud",
     sudo('''echo '%s' > /etc/apache2/sites-available/default''' % apache_conf)
 
 
-@task
 def configure_apache_ssl(ec2_internal_url="http://127.0.0.1:8773/services/Cloud",
                          compute_internal_url="http://127.0.0.1:8774/v1.1",
                          keystone_internal_url="http://127.0.0.1:5000/v2.0",
@@ -262,7 +254,6 @@ def configure_apache_ssl(ec2_internal_url="http://127.0.0.1:8773/services/Cloud"
     sudo('''echo '%s' > /etc/apache2/sites-available/default-ssl''' % apache_conf)
 
 
-@task
 def configure_iptables(public_ip):
     package_ensure('iptables-persistent')
     sudo('service iptables-persistent flush')
@@ -285,7 +276,6 @@ def configure_iptables(public_ip):
     sudo('service iptables-persistent start')
 
 
-@task
 def create_certs(common_name='127.0.0.1'):
     nonsecurekey = text_strip_margin('''
 	|-----BEGIN RSA PRIVATE KEY-----
