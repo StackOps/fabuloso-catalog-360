@@ -1,0 +1,12 @@
+Source: python-fabuloso-catalog-360
+Package: python-fabuloso-catalog-360
+Version: 1.1
+Section: python
+Priority: optional
+Maintainer: StackOps Developers <developers@stackops.com>
+Uploaders: Diego Parrilla <diego.parrilla@stackops.com>
+Homepage: http://www.stackops.com
+X-Python-Version: >= 2.6
+Architecture: all
+Depends: python-fabuloso (>= 0.9)
+Description: StackOps 360 Fabuloso deployment scripts
