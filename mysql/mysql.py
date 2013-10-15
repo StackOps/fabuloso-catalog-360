@@ -31,7 +31,7 @@ def configure(root_pass='stackops'):
     __configure_ubuntu_packages(root_pass)
     stop()
 
-    sudo('echo "manual" >> /etc/init/mysql.override')
+#    sudo('echo "manual" >> /etc/init/mysql.override')
     sudo('chmod -R og=rxw /var/lib/mysql')
     sudo('chown -R mysql:mysql /var/lib/mysql')
     start()
