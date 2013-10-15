@@ -14,6 +14,9 @@ Services:
           - define_glance_service
           - define_quantum_service
           - define_cinder_service
+          - define_portal_service
+          - define_accounting_service
+          - define_chargeback_service
     - name: register_portal
       description: Register the portal service and the endpoint
       methods:
@@ -22,6 +25,10 @@ Services:
       description: Register the accounting service and the endpoint
       methods:
           - define_accounting_service
+    - name: register_chargeback
+      description: Register the chargeback service and the endpoint
+      methods:
+          - define_chargeback_service
     - name: register_automation
       description: Register the automation service and the endpoint
       methods:
