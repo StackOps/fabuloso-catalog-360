@@ -217,7 +217,7 @@ def add_repos():
     sudo('echo "deb http://repos.stackops.net/ folsom-security main" >> /etc/apt/sources.list.d/stackops.list')
     sudo('echo "deb http://repos.stackops.net/ folsom-backports main" >> /etc/apt/sources.list.d/stackops.list')
 # If you want to use the stable repos, comment next line. If you want to use stable repos, uncomment next line.
-    sudo('echo "deb http://repos.stackops.net/ folsom-dev main" > /etc/apt/sources.list.d/stackops.list')
+#    sudo('echo "deb http://repos.stackops.net/ folsom-dev main" > /etc/apt/sources.list.d/stackops.list')
     sudo('apt-get -y update')
 
 @task
