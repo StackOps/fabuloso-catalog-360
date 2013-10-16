@@ -1,0 +1,11 @@
+name: glance
+file: glance.py
+description: Operations over OpenStack Glance module
+
+Services:
+    - name: install
+      description:  Install OpenStack Glance from ubuntu packages
+      methods:
+          - install
+          - set_config_file
+          - configure_local_storage
