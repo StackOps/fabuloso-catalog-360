@@ -12,8 +12,8 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-from fabric.api import settings, sudo
-from cuisine import package_clean, package_ensure
+from fabric.api import *
+from cuisine import *
 
 import fabuloso.utils as utils
 
@@ -122,7 +122,7 @@ def configure_network():
     sudo("sed -i -r 's/^\s*#(net\.ipv4\.ip_forward=1.*)/\\1/' /etc/sysctl.conf")
     sudo("echo 1 > /proc/sys/net/ipv4/ip_forward")
 
-def install(cluster=False, iface_ex="eth0"):
+def install(cluster=False, iface_ex="eth1"):
     """Generate quantum configuration. Execute on both servers"""
     if iface_ex is None:
         puts("{'error':'You need to pass the physical interface as argument of the external bridge'}")
@@ -159,7 +159,7 @@ def set_config_file(service_user='quantum', service_tenant_name='service', servi
     utils.set_option(QUANTUM_CONF,'default_notification_level', 'INFO')
     utils.set_option(QUANTUM_CONF,'external_network_bridge', external_network_bridge)
     utils.set_option(QUANTUM_CONF,'allow_overlapping_ips', "True")
-
+    quantum_server_start()
 
 def configure_ovs_plugin_gre(management_ip='127.0.0.1', mysql_username='quantum',tunnel_start='1',tunnel_end='1000',
                              mysql_password='stackops', mysql_host='127.0.0.1', mysql_port='3306', mysql_schema='quantum'):
@@ -194,10 +194,12 @@ def configure_l3_agent(service_user='quantum', service_tenant_name='service', se
     utils.set_option(L3_AGENT_CONF,'router_id',router_id)
     utils.set_option(L3_AGENT_CONF,'handle_internal_only_routers','True')
     utils.set_option(L3_AGENT_CONF,'polling_interval','3')
+    quantum_l3_agent_start()
 
 def configure_dhcp_agent(name_server='8.8.8.8'):
     utils.set_option(DHCP_AGENT_CONF,'use_namespaces','False')
     utils.set_option(DHCP_AGENT_CONF,'dnsmasq_dns_server',name_server)
+    quantum_dhcp_agent_start()
 
 def get_net_id(network_name, admin_user='admin', admin_tenant_name='admin', admin_pass='stackops', auth_url='http://localhost:5000/v2.0'):
     stdout = sudo("quantum --os-auth-url %s --os-username %s --os-password %s --os-tenant-name %s net-list | grep %s | awk '/ | / { print $2 }'" % (auth_url,admin_user,admin_pass, admin_tenant_name, network_name))
