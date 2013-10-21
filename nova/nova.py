@@ -158,7 +158,7 @@ def sql_connect_string(host='127.0.0.1', password='stackops', port='3306', schem
 
 
 def set_config_file(service_user='nova', service_tenant_name='service', service_password='stackops', auth_host='127.0.0.1',
-                    auth_port='35357', auth_protocol='http', management_ip='127.0.0.1',
+                    auth_port='35357', auth_protocol='http', management_ip='127.0.0.1', public_ip=None,
                     mysql_username='nova', mysql_password='stackops',
                     mysql_schema='nova', mysql_host='127.0.0.1',
                     mysql_port='3306'):
@@ -181,6 +181,9 @@ def set_config_file(service_user='nova', service_tenant_name='service', service_
     if management_ip is None:
         puts("{error:'Management IP of the node needed as argument'}")
         exit(0)
+
+    if public_ip is None:
+        public_ip = management_ip
 
     set_property('sql_connection', sql_connect_string(mysql_host,
                  mysql_password, mysql_port, mysql_schema, mysql_username))
@@ -242,6 +245,19 @@ def set_config_file(service_user='nova', service_tenant_name='service', service_
     set_property('quota_security_groups', '10')
     # NOVA-SCHEDULER configruration
     set_property('cpu_allocation_ratio', '8.0')
+    set_property('rabbit_host', management_ip)
+    set_property('s3_host', management_ip)
+    set_property('ec2_host', management_ip)
+    set_property('ec2_dmz_host', management_ip)
+    set_property('metadata_host', management_ip)
+    set_property('nova_url', 'http://%s:8774/v1.1/' % management_ip)
+    set_property('ec2_url', 'http://%s:8773/services/Cloud' % management_ip)
+    set_property('keystone_ec2_url', 'http://%s:5000/v2.0/ec2tokens' % management_ip)
+    set_property('quantum_url', 'http://%s:9696' % management_ip)
+    set_property('quantum_admin_auth_url', 'http://%s:35357/v2.0' % management_ip)
+    set_property('glance_api_servers', '%s:9292' % management_ip)
+    set_property('novncproxy_base_url', 'http://%s:6080/vnc_auto.html' % public_ip)
+    set_property('vncserver_proxyclient_address', management_ip)
     sudo('nova-manage db sync')
 
 
