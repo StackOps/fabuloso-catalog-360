@@ -1,0 +1,24 @@
+name: quantum 
+file: quantum.py
+description: Operations over Quantum
+
+Services:
+    - name: install
+      description: Install quantum server and configure it
+      methods:
+          - compile_datapath
+          - install
+          - set_config_file
+          - configure_ovs_plugin_gre
+          - configure_l3_agent
+          - configure_dhcp_agent
+          - start
+    - name: start
+      description: Start the Quantum service
+      methods: 
+          - start
+    - name: stop
+      description: Stop the Quantum service
+      methods:
+          - stop
+
