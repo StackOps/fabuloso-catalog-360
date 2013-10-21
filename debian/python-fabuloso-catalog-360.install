@@ -7,3 +7,4 @@ portal etc/fabuloso/repos/360/
 glance etc/fabuloso/repos/360/
 nova etc/fabuloso/repos/360/
 quantum etc/fabuloso/repos/360/
+compute etc/fabuloso/repos/360/
