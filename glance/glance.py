@@ -66,7 +66,7 @@ def install(cluster=False):
         sudo('chmod +x /usr/lib/ocf/resource.d/openstack/glance-*')
 
 
-def sql_connect_string(host, password, port, schema, username):
+def sql_connect_string(host='127.0.0.1', password='stackops', port='3306', schema='glance', username='glance'):
     sql_connection = 'mysql://%s:%s@%s:%s/%s' % (username, password, host,
                                                  port, schema)
     return sql_connection
@@ -101,7 +101,7 @@ def configure_local_storage(delete_content=False, set_glance_owner=True):
     start()
 
 
-def configure_nfs_storage(endpoint, delete_content=False,
+def configure_nfs_storage(endpoint='localhost:/mnt', delete_content=False,
                           set_glance_owner=True, endpoint_params='defaults'):
     package_ensure('nfs-common')
     if delete_content:
@@ -117,7 +117,7 @@ def configure_nfs_storage(endpoint, delete_content=False,
     start()
 
 
-def publish_ttylinux(auth_uri,
+def publish_ttylinux(auth_uri='http://127.0.0.1:35357/v2.0',
                      test_username='admin', test_password='stackops',
                      test_tenant_name='admin',
                      ):
