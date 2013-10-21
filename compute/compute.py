@@ -144,14 +144,10 @@ def configure_forwarding():
     sudo("echo 1 > /proc/sys/net/ipv4/ip_forward")
 
 
-def configure_network(iface_bridge='eth0',br_postfix='bond-vm'):
+def configure_network():
 
     openvswitch_start()
     configure_forwarding()
-    with settings(warn_only=True):
-        sudo('ovs-vsctl del-br br-%s' % br_postfix)
-    sudo('ovs-vsctl add-br br-%s' % br_postfix)
-    sudo('ovs-vsctl add-port br-%s %s' % (br_postfix,iface_bridge))
 
 def configure_ntp(automation_host='automation'):
     sudo('echo "server %s" > /etc/ntp.conf' % automation_host)
