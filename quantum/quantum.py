@@ -122,7 +122,7 @@ def configure_network():
     sudo("sed -i -r 's/^\s*#(net\.ipv4\.ip_forward=1.*)/\\1/' /etc/sysctl.conf")
     sudo("echo 1 > /proc/sys/net/ipv4/ip_forward")
 
-def install(cluster=False, iface_ex=None):
+def install(cluster=False, iface_ex="eth0"):
     """Generate quantum configuration. Execute on both servers"""
     if iface_ex is None:
         puts("{'error':'You need to pass the physical interface as argument of the external bridge'}")
