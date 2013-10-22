@@ -277,10 +277,9 @@ def configure_quantum(controller_host=None, rabbit_password='guest'):
     quantum_plugin_openvswitch_agent_start()
 
 
-def configure_ovs_plugin_gre(controller_host=None, management_iface='eth0', mysql_username='quantum', tunnel_start='1',tunnel_end='1000',
+def configure_ovs_plugin_gre(controller_host=None, compute_ip=None, mysql_username='quantum', tunnel_start='1',tunnel_end='1000',
                          mysql_password='stackops', mysql_port='3306', mysql_schema='quantum'):
     mysql_host=controller_host
-    compute_ip=sudo("ifconfig %s | awk -F':' '/inet addr/&&!/127.0.0.1/{split($2,_," ");print _[1]}'" % management_iface)
     utils.set_option(OVS_PLUGIN_CONF,'sql_connection',utils.sql_connect_string(mysql_host, mysql_password, mysql_port, mysql_schema, mysql_username),section='DATABASE')
     utils.set_option(OVS_PLUGIN_CONF,'reconnect_interval','2',section='DATABASE')
     utils.set_option(OVS_PLUGIN_CONF,'tenant_network_type','gre',section='OVS')
