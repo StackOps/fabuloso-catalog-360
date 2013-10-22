@@ -100,6 +100,7 @@ def start():
 
 def configure_ubuntu_packages():
     """Configure nova packages"""
+    package_ensure('iptables')
     package_ensure('nova-api')
     package_ensure('nova-cert')
     package_ensure('nova-common')
