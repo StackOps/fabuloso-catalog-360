@@ -66,12 +66,12 @@ def uninstall_ubuntu_packages():
     package_clean('mysql-client')
 
 
-def configure(mysql_username,
-              mysql_password,
-              admin_token,
-              mysql_admin_password,
-              keystone_url,
-              keystone_admin_url,
+def configure(mysql_username='portal',
+              mysql_password='stackops',
+              admin_token='stackops',
+              mysql_admin_password='stackops',
+              keystone_url='http://localhost:5000/v2.0',
+              keystone_admin_url='http://localhost:35357/v2.0',
               mysql_host='127.0.0.1',
               mysql_port='3306',
               mysql_schema='portal',
@@ -112,5 +112,5 @@ def _configure_token_license(app_id, license_token, root_pass):
                                         'lic_token': license_token})
 
 
-def configure_automation_license(license_token, root_pass):
+def configure_automation_license(license_token=None, root_pass="stackops"):
     _configure_token_license('automation', license_token, root_pass)
