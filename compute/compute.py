@@ -110,8 +110,7 @@ def configure_ubuntu_packages():
     package_ensure('vlan')
     package_ensure('bridge-utils')
     package_ensure('python-software-properties')
-    package_ensure('ntp')
-    package_ensure('kvm')
+    package_ensure('python-amqp')
     package_ensure('libvirt-bin')
     package_ensure('pm-utils')
     package_ensure('nova-compute-kvm')
@@ -127,6 +126,7 @@ def uninstall_ubuntu_packages():
     package_clean('libvirt-bin')
     package_clean('pm-utils')
     package_clean('nova-compute-kvm')
+    package_clean('python-amqp')
     package_clean('quantum-plugin-openvswitch-agent')
     package_clean('open-iscsi')
     package_clean('vlan')
@@ -150,7 +150,7 @@ def configure_network():
     configure_forwarding()
 
 def configure_ntp():
-    sudo('echo "server automation" > /etc/ntp.conf' % automation_host)
+    sudo('echo "server automation" > /etc/ntp.conf')
 
 
 def configure_vhost_net():
