@@ -130,11 +130,9 @@ def uninstall_ubuntu_packages():
     package_clean('autofs')
 
 
-def install(cluster=False):
+def install():
     """Generate compute configuration. Execute on both servers"""
     configure_ubuntu_packages()
-    if cluster:
-        stop()
     sudo('update-rc.d quantum-plugin-openvswitch-agent defaults 98 02')
     sudo('update-rc.d nova-compute defaults 98 02')
 
@@ -145,12 +143,11 @@ def configure_forwarding():
 
 
 def configure_network():
-
     openvswitch_start()
     configure_forwarding()
 
-def configure_ntp(automation_host='automation'):
-    sudo('echo "server %s" > /etc/ntp.conf' % automation_host)
+def configure_ntp():
+    sudo('echo "server automation" > /etc/ntp.conf' % automation_host)
 
 
 def configure_vhost_net():
@@ -183,7 +180,7 @@ def configure_libvirt():
     compute_start()
 
 
-def set_config_file(controller_host, public_ip, rabbit_password='guest', mysql_username='nova',
+def set_config_file(controller_host=None, public_ip=None, rabbit_password='guest', mysql_username='nova',
                     mysql_password='stackops', mysql_port='3306', mysql_schema='nova',
                     service_user='nova', service_tenant_name='service', service_pass='stackops',
                     auth_port='35357', auth_protocol='http', libvirt_type='kvm', vncproxy_port='6080',
@@ -267,7 +264,8 @@ def set_config_file(controller_host, public_ip, rabbit_password='guest', mysql_u
     start()
 
 
-def configure_quantum(rabbit_password='guest',rabbit_host='127.0.0.1'):
+def configure_quantum(controller_host=None, rabbit_password='guest'):
+    rabbit_host=controller_host
     utils.set_option(QUANTUM_CONF,'core_plugin','quantum.plugins.openvswitch.ovs_quantum_plugin.OVSQuantumPluginV2')
     utils.set_option(QUANTUM_CONF,'auth_strategy','keystone')
     utils.set_option(QUANTUM_CONF,'fake_rabbit','False')
@@ -279,8 +277,9 @@ def configure_quantum(rabbit_password='guest',rabbit_host='127.0.0.1'):
     quantum_plugin_openvswitch_agent_start()
 
 
-def configure_ovs_plugin_gre(management_iface='eth0', mysql_username='quantum', tunnel_start='1',tunnel_end='1000',
-                         mysql_password='stackops', mysql_host='127.0.0.1', mysql_port='3306', mysql_schema='quantum'):
+def configure_ovs_plugin_gre(controller_host=None, management_iface='eth0', mysql_username='quantum', tunnel_start='1',tunnel_end='1000',
+                         mysql_password='stackops', mysql_port='3306', mysql_schema='quantum'):
+    mysql_host=controller_host
     compute_ip=sudo("ifconfig %s | awk -F':' '/inet addr/&&!/127.0.0.1/{split($2,_," ");print _[1]}'" % management_iface)
     utils.set_option(OVS_PLUGIN_CONF,'sql_connection',utils.sql_connect_string(mysql_host, mysql_password, mysql_port, mysql_schema, mysql_username),section='DATABASE')
     utils.set_option(OVS_PLUGIN_CONF,'reconnect_interval','2',section='DATABASE')
