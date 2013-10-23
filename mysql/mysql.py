@@ -46,7 +46,7 @@ def start():
     sudo("nohup service mysql start")
 
 
-def __configure_ubuntu_packages(root_pass):
+def __configure_ubuntu_packages(root_pass='stackops'):
     """Configure mysql ubuntu packages"""
     sudo('echo mysql-server-5.5 mysql-server/root_password password %s'
          ' | debconf-set-selections' % root_pass)
@@ -63,7 +63,7 @@ def stop():
         sudo("nohup service mysql stop")
 
 
-def setup_schema(root_pass, username, password, schema_name,
+def setup_schema(root_pass='stackops', username=None, password=None, schema_name=None,
                  host=None):
 
     sudo('mysql -uroot -p%s -e "DROP DATABASE IF EXISTS %s;"'
@@ -165,8 +165,3 @@ def configure_all_schemas(root_pass='stackops', password='stackops',
                  password=password, drop_previous=False, mysql_host=mysql_host)
 
 
-def validate_database(database_type, username, password, host, port,
-                      schema, drop_schema=None, install_database=None):
-    fab = fabuloso.Fabuloso()
-    fab.validate_database(database_type, username, password, host, port,
-                          schema, drop_schema, install_database)

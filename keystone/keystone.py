@@ -64,7 +64,7 @@ def _sql_connect_string(host, password, port, schema, username):
     return sql_connection
 
 
-def set_config_file(admin_token='password', mysql_username='keystone',
+def set_config_file(admin_token='stackops', mysql_username='keystone',
                     mysql_password='stackops', mysql_host='127.0.0.1',
                     mysql_port='3306', mysql_schema='keystone'):
     """Configure keystone to use the database and set the default
@@ -141,7 +141,7 @@ def _create_user_for_service(endpoint, service_user_name, admin_token,
 
 
 def configure_users(endpoint="'http://localhost:35357/v2.0'",
-                    admin_token="password", admin_pass="stackops"):
+                    admin_token="stackops", admin_pass="stackops"):
     """Configure basic service users/roles"""
     admin_tenant = _create_tenant(endpoint, admin_token, 'admin')
     head_tenant = _create_tenant(endpoint, admin_token, 'head')
@@ -219,7 +219,7 @@ def _create_service(admin_token, service_name, service_type, description,
             internal_url))
 
 
-def define_keystone_service(admin_token='password', region='RegionOne',
+def define_keystone_service(admin_token='stackops', region='RegionOne',
                             endpoint="'http://localhost:35357/v2.0'",
                             ks_public_url="'http://localhost:35357/"
                                           "keystone/v2.0'",
@@ -234,7 +234,7 @@ def define_keystone_service(admin_token='password', region='RegionOne',
                              ks_password, 'service')
 
 
-def define_nova_service(admin_token='password', region='RegionOne',
+def define_nova_service(admin_token='stackops', region='RegionOne',
                         endpoint="'http://localhost:35357/v2.0'",
                         nova_public_url="'http://localhost/compute/v1.1/"
                                         "$(tenant_id)s'",
@@ -251,7 +251,7 @@ def define_nova_service(admin_token='password', region='RegionOne',
                              nova_password, 'service')
 
 
-def define_ec2_service(admin_token='password', region='RegionOne',
+def define_ec2_service(admin_token='stackops', region='RegionOne',
                        endpoint="'http://localhost:35357/v2.0'",
                        ec2_public_url="'http://localhost/services/Cloud'",
                        ec2_internal_url="''http://localhost/services/Cloud'",
@@ -261,7 +261,7 @@ def define_ec2_service(admin_token='password', region='RegionOne',
                     ec2_internal_url, ec2_admin_url)
 
 
-def define_glance_service(admin_token='password', region='RegionOne',
+def define_glance_service(admin_token='stackops', region='RegionOne',
                           endpoint="'http://localhost:35357/v2.0'",
                           glance_public_url="'http://localhost/glance/v1'",
                           glance_internal_url="'http://localhost:9292/v1'",
@@ -275,7 +275,7 @@ def define_glance_service(admin_token='password', region='RegionOne',
                              glance_password, 'service')
 
 
-def define_quantum_service(admin_token='password', region='RegionOne',
+def define_quantum_service(admin_token='stackops', region='RegionOne',
                            endpoint="'http://localhost:35357/v2.0'",
                            quantum_public_url="'http://localhost/network",
                            quantum_internal_url="'http://localhost:9696'",
@@ -289,7 +289,7 @@ def define_quantum_service(admin_token='password', region='RegionOne',
                              quantum_password, 'service')
 
 
-def define_cinder_service(admin_token='password', region='RegionOne',
+def define_cinder_service(admin_token='stackops', region='RegionOne',
                           endpoint="'http://localhost:35357/v2.0'",
                           cinder_public_url="'http://localhost/volume/v1/"
                                             "$(tenant_id)s'",
@@ -306,7 +306,7 @@ def define_cinder_service(admin_token='password', region='RegionOne',
                              cinder_password, 'service')
 
 
-def define_portal_service(admin_token='password', region='RegionOne',
+def define_portal_service(admin_token='stackops', region='RegionOne',
                           endpoint="'http://localhost:35357/v2.0'",
                           portal_public_url="'http://localhost/portal'",
                           portal_internal_url="'http://localhost:8080/portal'",
@@ -320,7 +320,7 @@ def define_portal_service(admin_token='password', region='RegionOne',
                              portal_password, 'service')
 
 
-def define_accounting_service(admin_token='password', region='RegionOne',
+def define_accounting_service(admin_token='stackops', region='RegionOne',
                               endpoint="'http://localhost:35357/v2.0'",
                               accounting_public_url="'http://localhost/"
                                                     "activity'",
@@ -340,7 +340,7 @@ def define_accounting_service(admin_token='password', region='RegionOne',
     _create_user_for_service(endpoint, accounting_user, admin_token,
                              accounting_password, 'service')
 
-def define_chargeback_service(admin_token='password', region='RegionOne',
+def define_chargeback_service(admin_token='stackops', region='RegionOne',
                               endpoint="'http://localhost:35357/v2.0'",
                               chargeback_public_url="'http://localhost/"
                                                     "chargeback'",
@@ -375,7 +375,7 @@ def define_automation_service(admin_token='password', region='RegionOne',
                              automation_password, 'service')
 
 
-def define_swift_service(admin_token='password', region='RegionOne',
+def define_swift_service(admin_token='stackops', region='RegionOne',
                          endpoint="'http://localhost:35357/v2.0'",
                          swift_public_url="''http://localhost:8888/v1/"
                                           "AUTH_%(tenant_id)s'",
@@ -393,7 +393,7 @@ def define_swift_service(admin_token='password', region='RegionOne',
                              swift_password, 'service')
 
 
-def configure_services(admin_token="password", public_ip='127.0.0.1',
+def configure_services(admin_token="stackops", public_ip='127.0.0.1',
                        public_port='80', internal_ip='127.0.0.1',
                        region='RegionOne'):
     """Configure services and endpoints"""

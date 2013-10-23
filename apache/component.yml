@@ -17,7 +17,3 @@ Services:
       description: Stop Apache HTTP service
       methods:
           - stop
-    - name: uninstall
-      description: Uninstall Apache HTTP Server
-      methods:
-          - uninstall
