@@ -92,6 +92,9 @@ def configure_ubuntu_packages():
     package_ensure('vlan')
     package_ensure('bridge-utils')
     package_ensure('python-cliff')
+    package_ensure('python-pyparsing')
+    package_ensure('python-amqp')
+    package_ensure('python-mysqldb')
     package_ensure('openvswitch-datapath-dkms')
     package_ensure('openvswitch-switch')
     package_ensure('quantum-plugin-openvswitch-agent')
@@ -99,14 +102,13 @@ def configure_ubuntu_packages():
     package_ensure('quantum-dhcp-agent')
     package_ensure('quantum-plugin-openvswitch')
     package_ensure('quantum-server')
-    package_ensure('python-pyparsing')
-    package_ensure('python-mysqldb')
 
 def uninstall_ubuntu_packages():
     """Uninstall openvswitch and quantum packages"""
     package_clean('iptables-persistent')
     package_clean('openvswitch-datapath-dkms')
     package_clean('openvswitch-switch')
+    package_clean('python-amqp')
     package_clean('python-cliff')
     package_clean('quantum-plugin-openvswitch-agent')
     package_clean('quantum-l3-agent')
