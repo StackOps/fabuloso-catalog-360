@@ -1,6 +1,7 @@
 apache etc/fabuloso/repos/360/
 automation etc/fabuloso/repos/360/
 keystone etc/fabuloso/repos/360/
+rabbitmq etc/fabuloso/repos/360/
 mysql etc/fabuloso/repos/360/
 os etc/fabuloso/repos/360/
 portal etc/fabuloso/repos/360/
