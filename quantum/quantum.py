@@ -67,6 +67,7 @@ def quantum_server_stop():
 def quantum_server_start():
     quantum_server_stop()
     sudo("service quantum-server start")
+    sudo("sleep 10")
 
 def stop():
     openvswitch_stop()
