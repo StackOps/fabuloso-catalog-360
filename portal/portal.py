@@ -44,10 +44,12 @@ def configure_ubuntu_packages():
     package_ensure('stackops-flavors-portal-plugin')
     package_ensure('stackops-networking-portal-plugin')
     package_ensure('stackops-head-portal-plugin')
+    package_ensure('stackops-hostsmanager-portal-plugin')
 
 
 def uninstall_ubuntu_packages():
     """Uninstall portal packages"""
+    package_clean('stackops-hostsmanager-portal-plugin')
     package_clean('stackops-head-portal-plugin')
     package_clean('stackops-networking-portal-plugin')
     package_clean('stackops-flavors-portal-plugin')
