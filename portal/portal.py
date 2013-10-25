@@ -77,7 +77,8 @@ def configure(mysql_username='portal',
               mysql_host='127.0.0.1',
               mysql_port='3306',
               mysql_schema='portal',
-              automation_license_token='vs0QiaN9TA6lIIe3uPSfiG3fs'):
+              automation_license_token='vs0QiaN9TA6lIIe3uPSfiG3fs',
+              activity_license_token='vs0QiaN9TA6lIIe3uPSfiG3fs'):
     """Generate portal configuration. Execute on both servers"""
     sudo('echo stackops-portal stackops-portal/mysql-usr string %s | '
          'debconf-set-selections' % mysql_username)
@@ -104,6 +105,8 @@ def configure(mysql_username='portal',
     configure_ubuntu_packages()
     configure_automation_license(automation_license_token,
                                  mysql_admin_password)
+    configure_activity_license(activity_license_token,
+                                 mysql_admin_password)
 
 
 def _configure_token_license(app_id, license_token, root_pass):
@@ -116,3 +119,6 @@ def _configure_token_license(app_id, license_token, root_pass):
 
 def configure_automation_license(license_token=None, root_pass="stackops"):
     _configure_token_license('automation', license_token, root_pass)
+
+def configure_activity_license(license_token=None, root_pass="stackops"):
+    _configure_token_license('activity', license_token, root_pass)
