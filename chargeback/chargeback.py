@@ -71,6 +71,7 @@ def configure_chargeback(mysql_chargeback_username='chargeback',
               mysql_chargeback_host='localhost',
               mysql_chargeback_port='3306',
               mysql_chargeback_schema='chargeback',
+              mysql_activity_schema='activity',
               mysql_chargeback_root_password='stackops',
               service_chargeback_user='chargeback',
               service_chargeback_password='stackops',
@@ -83,7 +84,7 @@ def configure_chargeback(mysql_chargeback_username='chargeback',
     sudo('echo stackops-chargeback stackops-chargeback/mysql-usr string %s | debconf-set-selections' % mysql_chargeback_username)
     sudo('echo stackops-chargeback stackops-chargeback/mysql-password password %s | debconf-set-selections' % mysql_chargeback_password)
     sudo('echo stackops-chargeback stackops-chargeback/mysql-schema string %s | debconf-set-selections' % mysql_chargeback_schema)
-    sudo('echo stackops-chargeback stackops-chargeback/mysql-activity-schema string %s | debconf-set-selections' % mysql_chargeback_schema)
+    sudo('echo stackops-chargeback stackops-chargeback/mysql-activity-schema string %s | debconf-set-selections' % mysql_activity_schema)
     sudo('echo stackops-chargeback stackops-chargeback/mysql-host string %s | debconf-set-selections' % mysql_chargeback_host)
     sudo('echo stackops-chargeback stackops-chargeback/mysql-port string %s | debconf-set-selections' % mysql_chargeback_port)
     sudo('echo stackops-chargeback stackops-chargeback/mysql-admin-password password %s | debconf-set-selections' % mysql_chargeback_root_password)
