@@ -26,41 +26,63 @@ def start():
     sudo("nohup service tomcat7 start")
 
 
-def configure_ubuntu_packages():
-    """Configure portal packages"""
+def configure_base_packages():
+    """Configure base portal packages"""
     package_ensure('openjdk-7-jdk')
     package_ensure('tomcat7')
     package_ensure('stackops-portal')
     package_ensure('mysql-client')
     package_ensure('stackops-documentation-portal-plugin')
+    package_ensure('stackops-zendesk-portal-plugin')
+
+def configure_nova_packages():
+    """Configure nova portal packages"""
     package_ensure('stackops-glance-portal-plugin')
     package_ensure('stackops-instances-portal-plugin')
-    package_ensure('stackops-zendesk-portal-plugin')
-    package_ensure('stackops-activity-portal-plugin')
-    package_ensure('stackops-accounting-portal-plugin')
     package_ensure('stackops-cinder-portal-plugin')
     package_ensure('stackops-security-portal-plugin')
     package_ensure('stackops-quotas-portal-plugin')
     package_ensure('stackops-flavors-portal-plugin')
     package_ensure('stackops-networking-portal-plugin')
-    package_ensure('stackops-head-portal-plugin')
     package_ensure('stackops-hostsmanager-portal-plugin')
 
+def configure_chargeback_packages():
+    """Configure chargeback portal packages"""
+    package_ensure('stackops-activity-portal-plugin')
+    package_ensure('stackops-accounting-portal-plugin')
+    package_ensure('stackops-chargeback-portal-plugin')
 
-def uninstall_ubuntu_packages():
-    """Uninstall portal packages"""
+def configure_automation_packages():
+    """Configure automation portal packages"""
+    package_ensure('stackops-head-portal-plugin')
+
+def uninstall_nova_packages():
+    """Uninstall nova portal packages"""
     package_clean('stackops-hostsmanager-portal-plugin')
-    package_clean('stackops-head-portal-plugin')
     package_clean('stackops-networking-portal-plugin')
     package_clean('stackops-flavors-portal-plugin')
     package_clean('stackops-quotas-portal-plugin')
     package_clean('stackops-security-portal-plugin')
     package_clean('stackops-cinder-portal-plugin')
-    package_clean('stackops-activity-portal-plugin')
-    package_clean('stackops-accounting-portal-plugin')
-    package_clean('stackops-documentation-portal-plugin')
     package_clean('stackops-glance-portal-plugin')
     package_clean('stackops-instances-portal-plugin')
+
+def uninstall_automation_packages():
+    """Uninstall automation portal packages"""
+    package_clean('stackops-head-portal-plugin')
+
+def uninstall_chargeback_packages():
+    """Uninstall chargeback portal packages"""
+    package_clean('stackops-chargeback-portal-plugin')
+    package_clean('stackops-activity-portal-plugin')
+    package_clean('stackops-accounting-portal-plugin')
+
+def uninstall_base_packages():
+    """Uninstall all portal packages"""
+    uninstall_nova_packages()
+    uninstall_automation_packages()
+    uninstall_chargeback_packages()
+    package_clean('stackops-documentation-portal-plugin')
     package_clean('stackops-zendesk-portal-plugin')
     package_clean('stackops-portal')
     package_clean('tomcat7')
@@ -102,7 +124,7 @@ def configure(mysql_username='portal',
          '| debconf-set-selections' % keystone_admin_url)
     sudo('echo stackops-portal stackops-portal/keystone-admin-token string %s '
          '| debconf-set-selections' % admin_token)
-    configure_ubuntu_packages()
+    configure_base_packages()
     configure_automation_license(automation_license_token,
                                  mysql_admin_password)
     configure_activity_license(activity_license_token,
