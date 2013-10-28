@@ -107,6 +107,7 @@ def compute_start():
 
 def configure_ubuntu_packages():
     """Configure compute packages"""
+    package_ensure('ntp')
     package_ensure('vlan')
     package_ensure('bridge-utils')
     package_ensure('python-software-properties')
