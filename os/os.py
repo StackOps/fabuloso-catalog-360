@@ -25,12 +25,12 @@ except:
 OS_VERSIONS_SUPPORTED = ['3.2.0-26-generic #41-Ubuntu',
                          '3.2.0-26-generic #41-Ubuntu']
 
-@task
+
 def network_stop():
     with settings(warn_only=True):
         sudo("nohup service networking stop")
 
-@task
+
 def network_start():
     network_stop()
     sudo("nohup service networking start")
@@ -76,7 +76,7 @@ iface %(slave)s inet manual
 
     sudo("echo '%s' > /etc/network/interfaces" % interfaces)
 
-@task
+
 def configure_ifaces(ifaces):
     ifc = ifaces.split()
     interfaces = sudo('cat "/etc/network/interfaces"')
@@ -131,7 +131,7 @@ def _get_ip_info(interface=''):
     return {'id':int(order[:-1]), 'name':name, 'ip':ip, 'netmask':_bits2netmask(netmask), 'broadcast': line[5]}
 
 
-@task
+
 def vagrant():
     # change from the default user to 'vagrant'
     env.user = 'vagrant'
@@ -142,7 +142,7 @@ def vagrant():
     result = local('vagrant ssh-config | grep IdentityFile', capture=True)
     env.key_filename = result.split()[1]
 
-@task
+
 def check_base_os():
     """Check if the base Operating System is supported"""
     version = run('uname -a')
@@ -152,12 +152,12 @@ def check_base_os():
             return
     abort('The %s Operating System is not supported! Process stopped!' % version)
 
-@task
+
 def hostname():
     """Returns current hostname"""
     run('hostname')
 
-@task
+
 def no_framebuffer():
     """Disable vga16fb framebuffer to boost virtual console"""
     sudo('sed -i /vga16fb/d /etc/modprobe.d/blacklist-framebuffer.conf ')
@@ -184,7 +184,7 @@ def add_glance_user():
     user_ensure('glance', home='/var/lib/glance', uid=202, gid=202,
                 shell='/bin/false')
 
-@task
+
 def configure_ntp(ntpHost):
     """Change default ntp server to client choice"""
     sudo("sed -i 's/server ntp.ubuntu.com/server %s/g' /etc/ntp.conf" % ntpHost)
@@ -192,7 +192,7 @@ def configure_ntp(ntpHost):
     sudo("ntpdate -u %s" % ntpHost)
     upstart_ensure('ntp')
 
-@task
+
 def remove_repos():
     """Remove existing repositories and updates"""
     sudo('sed -i /precise-updates/d /etc/apt/sources.list')
@@ -216,7 +216,7 @@ def add_repos():
 #    sudo('echo "deb http://repos.stackops.net/ folsom-dev main" > /etc/apt/sources.list.d/stackops.list')
     sudo('apt-get -y update')
 
-@task
+
 def configure_bond(bond_name=None,bond_slaves=None, bond_options='mode=balance-xor,miimon=100'):
     """Configure bond in the existing system"""
     package_ensure('ifenslave')
@@ -224,7 +224,7 @@ def configure_bond(bond_name=None,bond_slaves=None, bond_options='mode=balance-x
     slaves = bond_slaves.split()
     _configureBondFile(bond_name, slaves, bond_options)
 
-@task
+
 def clean_interfaces_file():
     """ Delete the /etc/network/interfaces file and configure loopback interface only """
     interfaces = sudo('cat "/etc/network/interfaces"')
@@ -233,7 +233,7 @@ def clean_interfaces_file():
     interfaces += "\niface lo inet loopback"
     sudo("echo '%s' > /etc/network/interfaces" % interfaces)
 
-@task
+
 def add_iface(iface=None,dhcp=False,static=True,address=None,netmask=None,gateway=None,broadcast=None,network=None,dns_list=None, domain=None, bridge=None ):
     """Update /etc/network/interfaces with info for the current scheme"""
     interfaces = sudo('cat "/etc/network/interfaces"')
@@ -267,31 +267,31 @@ def add_iface(iface=None,dhcp=False,static=True,address=None,netmask=None,gatewa
     sudo("echo '%s' > /etc/network/interfaces" % interfaces)
 
 
-@task
+
 def cpu():
     cpu = sudo("cat /proc/cpuinfo | grep 'model name' | sed 's/\(.*\): //g'").splitlines()
     puts(cpu)
     return cpu
 
-@task
+
 def cpu_count():
     count = len(cpu())
     puts(count)
     return count
 
-@task
+
 def cpu_speed():
     speed = sudo("cat /proc/cpuinfo | grep 'cpu MHz' | sed 's/[^0-9\.]//g'").splitlines()
     puts(speed)
     return speed
 
-@task
+
 def memory():
     mem = 1024 * int(sudo("cat /proc/meminfo | grep 'MemTotal' | sed 's/[^0-9\.]//g'"))
     puts(mem)
     return mem
 
-@task
+
 def is_virtual():
     virt =  sudo("egrep '(vmx|svm)' /proc/cpuinfo")
     if len(virt)>0:
@@ -299,7 +299,7 @@ def is_virtual():
     else:
         return "False"
 
-@task
+
 def iface_list():
     ifaces =  sudo("cat /proc/net/dev | sed 's/:\(.*\)//g'").splitlines()
     del ifaces [0]
@@ -312,14 +312,14 @@ def iface_list():
     puts(ifaces_list)
     return ifaces_list
 
-@task
+
 def iface_vendor(iface):
     tmp =  sudo("lshw -short -c network | grep '%s'" % iface).splitlines()
     vendor = tmp[len(tmp)-1][43:]
     puts(vendor)
     return vendor
 
-@task
+
 def mounts():
     mnt = sudo("mount -v")
     lines = mnt.split('\n')
@@ -341,7 +341,7 @@ def mounts():
     puts(inf)
     return inf
 
-@task
+
 def block_devices():
     procfile = sudo("cat /proc/partitions").splitlines()
     procfile.pop(0)
@@ -374,7 +374,7 @@ def block_devices():
     puts(inf)
     return inf
 
-@task
+
 def nameservers():
     mnt = sudo("cat /etc/resolv.conf")
     lines = mnt.splitlines()
@@ -385,7 +385,7 @@ def nameservers():
     puts(inf)
     return inf
 
-@task
+
 def network_config():
     def getDhcpInfo(device):
         info = {'address': 'none', 'netmask':'none', 'gateway':'none' }
@@ -446,32 +446,32 @@ def network_config():
     puts(inf)
     return inf
 
-@task
+
 def add_host(hostname,ip):
     sudo('sed -i /%s/d /etc/hosts' % hostname)
     sudo('echo "%s  %s" >> /etc/hosts' % (hostname, ip))
 
-@task
+
 def remove_host(hostname):
     sudo('sed -i /%s/d /etc/hosts' % hostname)
 
-@task
+
 def show_partitions(disk=None):
     out = sudo('for hdd in `ls %s`;do  parted -s -m $hdd unit MB print ;done   ' % disk)
     puts(out)
     return out
 
-@task
+
 def parted_mklabel(disk=None):
     package_ensure('parted')
     sudo('parted -s %s mklabel msdos' % disk)
 
-@task
+
 def parted(disk=None, start=None, end=None):
     package_ensure('parted')
     sudo('parted -s %s unit %% mkpart primary %s%% %s%%' % (disk, start, end))
 
-@task
+
 def execute_bootstrap():
     boot = "https://raw.github.com/StackOps/fabuloso/master/bootstrap/init.sh"
     run("wget -O - " + boot + " | sudo sh")
