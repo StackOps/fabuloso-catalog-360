@@ -207,6 +207,9 @@ def add_repos():
     sudo('sed -i /precise-security/d /etc/apt/sources.list')
     sudo('sed -i /archive.ubuntu.com/d /etc/apt/sources.list')
     sudo('rm  -f /etc/apt/sources.list.d/stackops.list')
+    sudo('echo "deb http://archive.ubuntu.com/ubuntu/ precise main universe" >> /etc/apt/sources.list')
+    sudo('echo "deb http://archive.ubuntu.com/ubuntu/ precise-security main universe" >> /etc/apt/sources.list')
+    sudo('echo "deb http://archive.ubuntu.com/ubuntu/ precise-updates main universe" >> /etc/apt/sources.list')
 # If you want to use the stable repos, uncomment next 4 lines. If you want to use dev repos, comment next 4 lines.
     sudo('echo "deb http://repos.stackops.net/ folsom main" >> /etc/apt/sources.list.d/stackops.list')
     sudo('echo "deb http://repos.stackops.net/ folsom-updates main" >> /etc/apt/sources.list.d/stackops.list')

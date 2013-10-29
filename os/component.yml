@@ -19,7 +19,6 @@ Services:
           - add_repos
           - add_nova_user
           - add_glance_user
-          - change_hostname
     - name: parted
       description: make partition
       methods:
