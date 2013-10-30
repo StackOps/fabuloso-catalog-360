@@ -48,7 +48,7 @@ def uninstall_ubuntu_packages():
 def install(dhcp_start, dhcp_end, dhcp_listen_interface, gateway,
             netmask, domain, dns, license_manager_url,
             license_token='vs0QiaN9TA6lIIe3uPSfiG3fs',
-            download_iso="False"):
+            download_iso="False",enable_dhcp="True"):
 
     """Generate automation configuration."""
     sudo('echo stackops-head stackops-head/accepted-stackops-license '
@@ -69,6 +69,8 @@ def install(dhcp_start, dhcp_end, dhcp_listen_interface, gateway,
          'debconf-set-selections' % dns)
     sudo('echo stackops-head stackops-head/download-stackops boolean %s '
          '| debconf-set-selections' % str(download_iso).lower())
+    sudo('echo stackops-head stackops-head/enable-dhcp boolean %s '
+         '| debconf-set-selections' % str(enable_dhcp).lower())
     sudo('echo stackops-head stackops-head/license-manager-url string %s | '
          'debconf-set-selections' % license_manager_url)
     sudo('echo stackops-head stackops-head/license-manager-token string %s | '
