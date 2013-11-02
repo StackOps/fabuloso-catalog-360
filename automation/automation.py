@@ -69,7 +69,7 @@ def install(dhcp_start, dhcp_end, dhcp_listen_interface, gateway,
          'debconf-set-selections' % dns)
     sudo('echo stackops-head stackops-head/download-stackops boolean %s '
          '| debconf-set-selections' % str(download_iso).lower())
-    sudo('echo stackops-head stackops-head/enable-dhcp boolean %s '
+    sudo('echo stackops-head stackops-head/enable_dhcp boolean %s '
          '| debconf-set-selections' % str(enable_dhcp).lower())
     sudo('echo stackops-head stackops-head/license-manager-url string %s | '
          'debconf-set-selections' % license_manager_url)
