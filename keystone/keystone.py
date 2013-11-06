@@ -277,7 +277,7 @@ def define_glance_service(admin_token='stackops', region='RegionOne',
 
 def define_quantum_service(admin_token='stackops', region='RegionOne',
                            endpoint="'http://localhost:35357/v2.0'",
-                           quantum_public_url="'http://localhost/network",
+                           quantum_public_url="'http://localhost/network'",
                            quantum_internal_url="'http://localhost:9696'",
                            quantum_admin_url="'http://localhost:9696'",
                            quantum_user='quantum',
