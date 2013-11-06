@@ -254,7 +254,7 @@ def define_nova_service(admin_token='stackops', region='RegionOne',
 def define_ec2_service(admin_token='stackops', region='RegionOne',
                        endpoint="'http://localhost:35357/v2.0'",
                        ec2_public_url="'http://localhost/services/Cloud'",
-                       ec2_internal_url="''http://localhost/services/Cloud'",
+                       ec2_internal_url="'http://localhost/services/Cloud'",
                        ec2_admin_url="'http://localhost/services/Admin'"):
     _create_service(admin_token, 'ec2', 'ec2', 'EC2 Compatibility '
                     'Service', region, endpoint, ec2_public_url,
