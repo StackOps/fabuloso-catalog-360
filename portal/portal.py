@@ -99,7 +99,7 @@ def configure(mysql_username='portal',
               mysql_host='127.0.0.1',
               mysql_port='3306',
               mysql_schema='portal',
-              automation_license_token='vs0QiaN9TA6lIIe3uPSfiG3fs',
+              automation_license_token='vs0QiaN9TA6lIIe3uPSfiG3fr',
               activity_license_token='vs0QiaN9TA6lIIe3uPSfiG3fs'):
     """Generate portal configuration. Execute on both servers"""
     sudo('echo stackops-portal stackops-portal/mysql-usr string %s | '
@@ -125,9 +125,11 @@ def configure(mysql_username='portal',
     sudo('echo stackops-portal stackops-portal/keystone-admin-token string %s '
          '| debconf-set-selections' % admin_token)
     configure_base_packages()
-    configure_automation_license(automation_license_token,
+    if automation_license_token != "":
+	configure_automation_license(automation_license_token,
                                  mysql_admin_password)
-    configure_activity_license(activity_license_token,
+    if activity_license_token != "":
+        configure_activity_license(activity_license_token,
                                  mysql_admin_password)
 
 
