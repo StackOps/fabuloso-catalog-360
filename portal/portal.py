@@ -126,7 +126,7 @@ def configure(mysql_username='portal',
          '| debconf-set-selections' % admin_token)
     configure_base_packages()
     if automation_license_token != "":
-	configure_automation_license(automation_license_token,
+        configure_automation_license(automation_license_token,
                                  mysql_admin_password)
     if activity_license_token != "":
         configure_activity_license(activity_license_token,
