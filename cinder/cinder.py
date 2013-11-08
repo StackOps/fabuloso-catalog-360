@@ -68,11 +68,10 @@ def install():
          "/etc/tgt/conf.d/cinder.conf")
     sudo("echo 'include /etc/tgt/conf.d/cinder.conf' > /etc/tgt/targets.conf")
 
-
-def set_config_file(user, password, auth_host,
-                    auth_port, auth_protocol,
-                    mysql_username, mysql_password,
-                    mysql_schema='cinder', tenant='service',
+def set_config_file(service_user='cinder', service_pass='stackops', auth_host='127.0.0.1',
+                    auth_port='35357', auth_protocol='http',
+                    mysql_username='cinder', mysql_password='stackops',
+                    mysql_schema='cinder', service_tenant_name='service',
                     mysql_host='127.0.0.1', mysql_port='3306',
                     storage_type='lvm', nfs_shares=None,
                     nfs_sparsed_volumes=True,
@@ -115,11 +114,11 @@ def set_config_file(user, password, auth_host,
                          nfs_sparsed_volumes)
 
     utils.set_option(CINDER_API_PASTE_CONF, 'admin_tenant_name',
-                     tenant, section='filter:authtoken')
+                     service_tenant_name, section='filter:authtoken')
     utils.set_option(CINDER_API_PASTE_CONF, 'admin_user',
-                     user, section='filter:authtoken')
+                     service_user, section='filter:authtoken')
     utils.set_option(CINDER_API_PASTE_CONF, 'admin_password',
-                     password, section='filter:authtoken')
+                     service_pass, section='filter:authtoken')
     utils.set_option(CINDER_API_PASTE_CONF, 'auth_host', auth_host,
                      section='filter:authtoken')
     utils.set_option(CINDER_API_PASTE_CONF, 'auth_port', auth_port,
