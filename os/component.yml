@@ -16,6 +16,8 @@ Services:
     - name: install
       description: Prepares remote system for a OS with StackOps deployment
       methods:
+          - configure_network
+          - network_restart
           - add_repos
           - add_nova_user
           - add_glance_user
@@ -23,3 +25,8 @@ Services:
       description: make partition
       methods:
           - parted
+    - name: configure_network
+      description: Configure the network of the node
+      methods:
+          - configure_network
+

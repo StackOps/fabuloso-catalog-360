@@ -7,6 +7,7 @@ Services:
       description: Install and Configure StackOps portal
       methods:
           - configure
+          - configure_licenses
     - name: uninstall
       description: Uninstall StackOps portal and all the packages
       methods:

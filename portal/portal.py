@@ -99,8 +99,9 @@ def configure(mysql_username='portal',
               mysql_host='127.0.0.1',
               mysql_port='3306',
               mysql_schema='portal',
-              automation_license_token='vs0QiaN9TA6lIIe3uPSfiG3fr',
-              activity_license_token='vs0QiaN9TA6lIIe3uPSfiG3fs'):
+	      install_nova_plugins='false',
+	      install_chargeback_plugins='false',
+	      install_automation_plugins='false'):
     """Generate portal configuration. Execute on both servers"""
     sudo('echo stackops-portal stackops-portal/mysql-usr string %s | '
          'debconf-set-selections' % mysql_username)
@@ -125,6 +126,16 @@ def configure(mysql_username='portal',
     sudo('echo stackops-portal stackops-portal/keystone-admin-token string %s '
          '| debconf-set-selections' % admin_token)
     configure_base_packages()
+    if str(install_nova_plugins).lower() == "true":
+        configure_nova_packages()
+    if str(install_chargeback_plugins).lower() == "true":
+        configure_chargeback_packages()
+    if str(install_automation_plugins).lower() == "true":
+        configure_automation_packages()
+
+def configure_licenses(automation_license_token='vs0QiaN9TA6lIIe3uPSfiG3fr', 
+		       activity_license_token='vs0QiaN9TA6lIIe3uPSfiG3fs',
+		       mysql_admin_password='stackops'):
     if automation_license_token != "":
         configure_automation_license(automation_license_token,
                                  mysql_admin_password)
@@ -132,13 +143,13 @@ def configure(mysql_username='portal',
         configure_activity_license(activity_license_token,
                                  mysql_admin_password)
 
-
 def _configure_token_license(app_id, license_token, root_pass):
+    with settings(warn_only=True):
         sudo("""mysql -uroot -p%(root_pass)s -e "INSERT INTO
-        PORTAL_LICENSING_TOKEN (APP_ID,TOKEN) VALUES ('%(app_id)s',
-        '%(lic_token)s');" portal""" % {'root_pass': root_pass,
-                                        'app_id': app_id,
-                                        'lic_token': license_token})
+            PORTAL_LICENSING_TOKEN (APP_ID,TOKEN) VALUES ('%(app_id)s',
+            '%(lic_token)s');" portal""" % {'root_pass': root_pass,
+                                            'app_id': app_id,
+                                            'lic_token': license_token})
 
 
 def configure_automation_license(license_token=None, root_pass="stackops"):

@@ -43,7 +43,7 @@ def configure_activity(mysql_activity_username='activity',
               auth_port='35357',
               auth_protocol='http',
               auth_uri='/v2.0',
-              license_token="SUhIsoHOLNFjt6Drz7W26NrNs"):
+              license_token="vs0QiaN9TA6lIIe3uPSfiG3fs"):
     """Generate activity configuration. Execute on both servers"""
     sudo('echo stackops-activity stackops-activity/mysql-usr string %s | debconf-set-selections' % mysql_activity_username)
     sudo('echo stackops-activity stackops-activity/mysql-password password %s | debconf-set-selections' % mysql_activity_password)

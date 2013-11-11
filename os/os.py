@@ -30,10 +30,13 @@ def network_stop():
     with settings(warn_only=True):
         sudo("nohup service networking stop")
 
-
 def network_start():
     network_stop()
     sudo("nohup service networking start")
+
+def network_restart():
+    with settings(warn_only=True):
+        sudo("nohup service networking restart")
 
 def _configureBondFile(bond_name, bond_slaves, bond_options):
     interfaces = sudo('cat "/etc/network/interfaces"')
@@ -234,36 +237,139 @@ def clean_interfaces_file():
     sudo("echo '%s' > /etc/network/interfaces" % interfaces)
 
 
-def add_iface(iface=None,dhcp=False,static=True,address=None,netmask=None,gateway=None,broadcast=None,network=None,dns_list=None, domain=None, bridge=None ):
+def configure_network(management_iface="eth0",
+		management_dhcp="true",
+		management_static="true",
+		management_address="",
+		management_netmask="",
+		management_gateway="",
+		management_broadcast="",
+		management_network="",
+		management_dns_list="", 
+		management_domain="", 
+		management_bridge="",
+		service_iface="",
+                service_dhcp="false",
+                service_static="false",
+                service_address="",
+                service_netmask="",
+                service_gateway="",
+                service_broadcast="",
+                service_network="",
+                service_dns_list="", 
+                service_domain="", 
+                service_bridge="",
+                public_iface="",
+                public_dhcp="false",
+                public_static="false",
+                public_address="",
+                public_netmask="",
+                public_gateway="",
+                public_broadcast="",
+                public_network="",
+                public_dns_list="",
+                public_domain="",
+                public_bridge="",
+                storage_iface="",
+               	storage_dhcp="false",
+                storage_static="true",
+                storage_address="",
+                storage_netmask="",
+                storage_gateway="",
+                storage_broadcast="",
+                storage_network="",
+                storage_dns_list="",
+                storage_domain="",
+                storage_bridge=""):
+    clean_interfaces_file()
+    if management_iface!=None and len(management_iface)>0:
+	add_iface(iface=management_iface,
+		dhcp=management_dhcp,
+		static=management_static,
+		address=management_address,
+		netmask=management_netmask,
+		gateway=management_gateway,
+		broadcast=management_broadcast,
+		network=management_network,
+		dns_list=management_dns_list,
+		domain=management_domain,
+		bridge=management_bridge)
+    if service_iface!=None and len(service_iface)>0:
+        add_iface(iface=service_iface,
+                dhcp=service_dhcp,
+                static=service_static,
+                address=service_address,
+                netmask=service_netmask,
+                gateway=service_gateway,
+                broadcast=service_broadcast,
+                network=service_network,
+                dns_list=service_dns_list,
+                domain=service_domain,
+                bridge=service_bridge)
+    if public_iface!=None and len(public_iface)>0:
+        add_iface(iface=public_iface,
+                dhcp=public_dhcp,
+                static=public_static,
+                address=public_address,
+                netmask=public_netmask,
+                gateway=public_gateway,
+                broadcast=public_broadcast,
+                network=public_network,
+                dns_list=public_dns_list,
+                domain=public_domain,
+                bridge=public_bridge)
+    if storage_iface!=None and len(storage_iface)>0:
+        add_iface(iface=storage_iface,
+                dhcp=storage_dhcp,
+                static=storage_static,
+                address=storage_address,
+                netmask=storage_netmask,
+                gateway=storage_gateway,
+                broadcast=storage_broadcast,
+                network=storage_network,
+                dns_list=storage_dns_list,
+                domain=storage_domain,
+                bridge=storage_bridge)
+
+
+def add_iface(iface="",dhcp="false",static="true",address="",netmask="",gateway="",broadcast="",network="",dns_list="", domain="", bridge="" ):
     """Update /etc/network/interfaces with info for the current scheme"""
     interfaces = sudo('cat "/etc/network/interfaces"')
 
     # Write the entry for the new interface
+    interfaces += "\n \n# STARTS CONFIGURATION OF %s" % iface
     interfaces += "\nauto %s" % iface
-    if dhcp :
+    if str(dhcp).lower() == "true" :
         interfaces += "\niface %s inet dhcp" % iface
     else:
-        if static:
+        if str(static).lower() == "true":
             interfaces += "\niface %s inet static" % iface
+	    if len(str(address))>0:
+        	interfaces += "\n\taddress %s" % address
+    	    if len(str(netmask))>0:
+      	        interfaces += "\n\tnetmask %s" % netmask
+    	    if len(str(gateway))>0:
+       		interfaces += "\n\tgateway %s" % gateway
+    	    if len(str(broadcast))>0:
+    		interfaces += "\n\tbroadcast %s" % broadcast
+    	    if len(str(network))>0:
+    		interfaces += "\n\tnetwork %s" % network
+    	    if len(str(dns_list))>0:
+        	interfaces += "\n\tdns-nameservers %s" % dns_list
+    	    if len(str(domain))>0:
+        	interfaces += "\n\tdns-search %s" % domain
+    	    if len(str(bridge))>0:
+        	interfaces += "\n\tbridge_ports %s" % bridge
+        	interfaces += "\n\tbridge_maxwait 0"
+        	interfaces += "\n\tbridge_fd 0 "
+        	interfaces += "\n\tbridge_stp off"
         else:
             interfaces += "\niface %s inet manual" % iface
+            interfaces += "\n\tup ifconfig $IFACE 0.0.0.0 up"
+            interfaces += "\n\tup ip link set $IFACE promisc on"
+            interfaces += "\n\tdown ifconfig $IFACE down"
 
-    interfaces += "\n\taddress %s" % address
-    interfaces += "\n\tnetmask %s" % netmask
-    if gateway:
-        interfaces += "\n\tgateway %s" % gateway
-    interfaces += "\n\tbroadcast %s" % broadcast
-    interfaces += "\n\tnetwork %s" % network
-    if dns_list:
-        interfaces += "\n\tdns-nameservers %s" % dns_list
-    if domain:
-        interfaces += "\n\tdns-search %s" % domain
-    if bridge:
-        interfaces += "\n\tbridge_ports %s" % bridge
-        interfaces += "\n\tbridge_maxwait 0"
-        interfaces += "\n\tbridge_fd 0 "
-        interfaces += "\n\tbridge_stp off"
-    interfaces  += "\n"
+    interfaces += "\n# ENDS CONFIGURATION OF %s" % iface
     sudo("echo '%s' > /etc/network/interfaces" % interfaces)
 
 

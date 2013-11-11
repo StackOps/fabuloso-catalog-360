@@ -232,7 +232,7 @@ def configure_external_bridge():
     sudo('ip addr add 0.0.0.0 dev br-ex')
     sudo('ip link set br-ex up')
 
-def configure_default_private_network(network_name, private_range, private_gw, admin_user='admin', admin_tenant_name='admin', admin_pass='stackops', auth_url='http://localhost:5000/v2.0', dns_list='8.8.8.8 8.8.4.4'):
+def configure_default_private_network(network_name='default_private_network', private_range='10.0.0.0/24', private_gw='10.0.0.1', admin_user='admin', admin_tenant_name='admin', admin_pass='stackops', auth_url='http://localhost:5000/v2.0', dns_list='8.8.8.8 8.8.4.4'):
     sudo('quantum --os-auth-url %s --os-username %s --os-password %s --os-tenant-name %s net-create %s' % (auth_url,admin_user,admin_pass, admin_tenant_name,network_name))
     private_network_id = get_net_id(network_name, admin_user, admin_tenant_name, admin_pass, auth_url)
     sudo('quantum --os-auth-url %s --os-username %s --os-password %s --os-tenant-name %s subnet-create --ip_version 4 %s %s --gateway %s --dns_nameservers list=true %s --name %s'  % (auth_url,admin_user,admin_pass, admin_tenant_name,private_network_id,private_range,private_gw, dns_list, network_name))
@@ -249,3 +249,11 @@ def delete_subnetwork(subnetwork, admin_user='admin', admin_tenant_name='admin',
 def delete_router(router_id, admin_user='admin', admin_tenant_name='admin', admin_pass='stackops', auth_url='http://localhost:5000/v2.0'):
     sudo('quantum --os-auth-url %s --os-username %s --os-password %s --os-tenant-name %s router-delete %s' % (auth_url,admin_user,admin_pass, admin_tenant_name, router_id))
 
+def delete_gateway(ip):
+    sudo('route del default gw %s' % ip)
+
+def delete_default_gateway(management_iface="eth0"):
+    with settings(warn_only=True):
+        sudo("sudo route del default gw `route | grep 'default' | grep %s | awk '/  / { print $2 }' | tail -1`" % management_iface)
+    with settings(warn_only=True):
+        sudo("sudo route del default gw `route | grep 'default' | grep %s | awk '/  / { print $2 }' | tail -1`" % management_iface)
