@@ -204,19 +204,19 @@ def remove_repos():
     sudo('rm  -f /etc/apt/sources.list.d/stackops.list')
     sudo('apt-get -y update')
 
-def add_repos():
+def add_repos(dev="false"):
     """Clean and Add necessary repositories and updates"""
     sudo('sed -i /precise-updates/d /etc/apt/sources.list')
     sudo('sed -i /precise-security/d /etc/apt/sources.list')
     sudo('sed -i /archive.ubuntu.com/d /etc/apt/sources.list')
     sudo('rm  -f /etc/apt/sources.list.d/stackops.list')
-# If you want to use the stable repos, uncomment next 4 lines. If you want to use dev repos, comment next 4 lines.
-    sudo('echo "deb http://repos.stackops.net/ folsom main" >> /etc/apt/sources.list.d/stackops.list')
-    sudo('echo "deb http://repos.stackops.net/ folsom-updates main" >> /etc/apt/sources.list.d/stackops.list')
-    sudo('echo "deb http://repos.stackops.net/ folsom-security main" >> /etc/apt/sources.list.d/stackops.list')
-    sudo('echo "deb http://repos.stackops.net/ folsom-backports main" >> /etc/apt/sources.list.d/stackops.list')
-# If you want to use the stable repos, comment next line. If you want to use stable repos, uncomment next line.
-#    sudo('echo "deb http://repos.stackops.net/ folsom-dev main" > /etc/apt/sources.list.d/stackops.list')
+    if str(dev).lower() == "false":
+        sudo('echo "deb http://repos.stackops.net/ folsom main" >> /etc/apt/sources.list.d/stackops.list')
+        sudo('echo "deb http://repos.stackops.net/ folsom-updates main" >> /etc/apt/sources.list.d/stackops.list')
+        sudo('echo "deb http://repos.stackops.net/ folsom-security main" >> /etc/apt/sources.list.d/stackops.list')
+        sudo('echo "deb http://repos.stackops.net/ folsom-backports main" >> /etc/apt/sources.list.d/stackops.list')
+    else:
+        sudo('echo "deb http://repos.stackops.net/ folsom-dev main" > /etc/apt/sources.list.d/stackops.list')
     sudo('apt-get -y update')
 
 
