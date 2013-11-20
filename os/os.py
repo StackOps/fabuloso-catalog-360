@@ -30,13 +30,16 @@ def network_stop():
     with settings(warn_only=True):
         sudo("nohup service networking stop")
 
+
 def network_start():
     network_stop()
     sudo("nohup service networking start")
 
+
 def network_restart():
     with settings(warn_only=True):
         sudo("nohup service networking restart")
+
 
 def _configureBondFile(bond_name, bond_slaves, bond_options):
     interfaces = sudo('cat "/etc/network/interfaces"')
@@ -46,8 +49,8 @@ def _configureBondFile(bond_name, bond_slaves, bond_options):
         'auto %s' % bond_name,
         'iface %s inet manual' % bond_name,
         '\tbond-slaves none',
-        '\n'.join( ('\tbond-'+' '.join(o.split('=',1)) for o in bond_options.split(',')) )
-        ))
+        '\n'.join(('\tbond-' + ' '.join(o.split('=', 1)) for o in bond_options.split(',')))
+    ))
 
     def _clean_auto(line):
         parts = line.split()
@@ -58,7 +61,7 @@ def _configureBondFile(bond_name, bond_slaves, bond_options):
             return ''
         return 'auto %s\n' % ' '.join(parts)
 
-    interfaces = ''.join( map(_clean_auto, StringIO(interfaces)) )
+    interfaces = ''.join(map(_clean_auto, StringIO(interfaces)))
 
     # Create slaves
     for slave in bond_slaves:
@@ -68,7 +71,7 @@ iface %(slave)s inet manual
     bond-master %(bond)s
     bond-primary %(slaves)s
 '''
-        conf = conf % {'bond':bond_name, 'slave':slave, 'slaves': ' '.join(bond_slaves)}
+        conf = conf % {'bond': bond_name, 'slave': slave, 'slaves': ' '.join(bond_slaves)}
         ifup = '''
     up ifconfig $IFACE 0.0.0.0 up
     up ip link set $IFACE promisc on
@@ -83,6 +86,7 @@ iface %(slave)s inet manual
 def configure_ifaces(ifaces):
     ifc = ifaces.split()
     interfaces = sudo('cat "/etc/network/interfaces"')
+
     def _clean_auto(line):
         parts = line.split()
         if not parts or parts[0] != 'auto':
@@ -92,7 +96,7 @@ def configure_ifaces(ifaces):
             return ''
         return 'auto %s\n' % ' '.join(parts)
 
-    interfaces = ''.join( map(_clean_auto, StringIO(interfaces)) )
+    interfaces = ''.join(map(_clean_auto, StringIO(interfaces)))
 
     # Create ifaces
     for slave in ifc:
@@ -100,7 +104,7 @@ def configure_ifaces(ifaces):
 auto %(slave)s
 iface %(slave)s inet manual
 '''
-        conf = conf % {'slave':slave}
+        conf = conf % {'slave': slave}
         ifup = '''
     up ifconfig $IFACE 0.0.0.0 up
     up ip link set $IFACE promisc on
@@ -111,28 +115,28 @@ iface %(slave)s inet manual
 
     sudo("echo '%s' > /etc/network/interfaces" % interfaces)
 
+
 def _bits2netmask(bits):
-    bits= int(bits)
+    bits = int(bits)
     parts = []
     while bits > 0:
         if bits > 7:
             parts.append('255')
         else:
-            parts.append(str((255^2**(8-bits))+1))
+            parts.append(str((255 ^ 2 ** (8 - bits)) + 1))
         bits -= 8
     if len(parts) < 4:
-        parts.extend(['0']*(4-len(parts)))
+        parts.extend(['0'] * (4 - len(parts)))
     return '.'.join(parts)
 
 
 def _get_ip_info(interface=''):
-    line = sudo('ip -f inet -o addr show %s' % interface ).split()
+    line = sudo('ip -f inet -o addr show %s' % interface).split()
     if not line:
         return None
     order, name = line[0:2]
     ip, netmask = line[3].split('/')
-    return {'id':int(order[:-1]), 'name':name, 'ip':ip, 'netmask':_bits2netmask(netmask), 'broadcast': line[5]}
-
+    return {'id': int(order[:-1]), 'name': name, 'ip': ip, 'netmask': _bits2netmask(netmask), 'broadcast': line[5]}
 
 
 def vagrant():
@@ -166,12 +170,14 @@ def no_framebuffer():
     sudo('sed -i /vga16fb/d /etc/modprobe.d/blacklist-framebuffer.conf ')
     sudo('echo "blacklist vga16fb" >> /etc/modprobe.d/blacklist-framebuffer.conf ')
 
+
 def change_hostname(hostname):
     """Modify the hostname of the server"""
     current_hostname = run('hostname')
     sudo('echo "%s" > /etc/hostname' % hostname)
-    sudo("sed -i 's/%s/%s/g' /etc/hosts" %(current_hostname, hostname))
+    sudo("sed -i 's/%s/%s/g' /etc/hosts" % (current_hostname, hostname))
     sudo("hostname %s" % hostname)
+
 
 def add_nova_user():
     """Add nova users and groups if they don't exists in the
@@ -179,6 +185,7 @@ def add_nova_user():
     group_ensure('nova', 201)
     user_ensure('nova', home='/var/lib/nova', uid=201, gid=201,
                 shell='/bin/false')
+
 
 def add_glance_user():
     """Add glance users and groups if they don't exists in the
@@ -204,6 +211,7 @@ def remove_repos():
     sudo('rm  -f /etc/apt/sources.list.d/stackops.list')
     sudo('apt-get -y update')
 
+
 def add_repos(dev="false"):
     """Clean and Add necessary repositories and updates"""
     sudo('sed -i /precise-updates/d /etc/apt/sources.list')
@@ -220,7 +228,7 @@ def add_repos(dev="false"):
     sudo('apt-get -y update')
 
 
-def configure_bond(bond_name=None,bond_slaves=None, bond_options='mode=balance-xor,miimon=100'):
+def configure_bond(bond_name=None, bond_slaves=None, bond_options='mode=balance-xor,miimon=100'):
     """Configure bond in the existing system"""
     package_ensure('ifenslave')
     package_ensure('bridge-utils')
@@ -238,131 +246,132 @@ def clean_interfaces_file():
 
 
 def configure_network(management_iface="eth0",
-		management_dhcp="true",
-		management_static="true",
-		management_address="",
-		management_netmask="",
-		management_gateway="",
-		management_broadcast="",
-		management_network="",
-		management_dns_list="", 
-		management_domain="", 
-		management_bridge="",
-		service_iface="",
-                service_dhcp="false",
-                service_static="false",
-                service_address="",
-                service_netmask="",
-                service_gateway="",
-                service_broadcast="",
-                service_network="",
-                service_dns_list="", 
-                service_domain="", 
-                service_bridge="",
-                public_iface="",
-                public_dhcp="false",
-                public_static="false",
-                public_address="",
-                public_netmask="",
-                public_gateway="",
-                public_broadcast="",
-                public_network="",
-                public_dns_list="",
-                public_domain="",
-                public_bridge="",
-                storage_iface="",
-               	storage_dhcp="false",
-                storage_static="true",
-                storage_address="",
-                storage_netmask="",
-                storage_gateway="",
-                storage_broadcast="",
-                storage_network="",
-                storage_dns_list="",
-                storage_domain="",
-                storage_bridge=""):
+                      management_dhcp="true",
+                      management_static="true",
+                      management_address="",
+                      management_netmask="",
+                      management_gateway="",
+                      management_broadcast="",
+                      management_network="",
+                      management_dns_list="",
+                      management_domain="",
+                      management_bridge="",
+                      service_iface="",
+                      service_dhcp="false",
+                      service_static="false",
+                      service_address="",
+                      service_netmask="",
+                      service_gateway="",
+                      service_broadcast="",
+                      service_network="",
+                      service_dns_list="",
+                      service_domain="",
+                      service_bridge="",
+                      public_iface="",
+                      public_dhcp="false",
+                      public_static="false",
+                      public_address="",
+                      public_netmask="",
+                      public_gateway="",
+                      public_broadcast="",
+                      public_network="",
+                      public_dns_list="",
+                      public_domain="",
+                      public_bridge="",
+                      storage_iface="",
+                      storage_dhcp="false",
+                      storage_static="true",
+                      storage_address="",
+                      storage_netmask="",
+                      storage_gateway="",
+                      storage_broadcast="",
+                      storage_network="",
+                      storage_dns_list="",
+                      storage_domain="",
+                      storage_bridge=""):
     clean_interfaces_file()
-    if management_iface!=None and len(management_iface)>0:
-	add_iface(iface=management_iface,
-		dhcp=management_dhcp,
-		static=management_static,
-		address=management_address,
-		netmask=management_netmask,
-		gateway=management_gateway,
-		broadcast=management_broadcast,
-		network=management_network,
-		dns_list=management_dns_list,
-		domain=management_domain,
-		bridge=management_bridge)
-    if service_iface!=None and len(service_iface)>0:
+    if management_iface != None and len(management_iface) > 0:
+        add_iface(iface=management_iface,
+                  dhcp=management_dhcp,
+                  static=management_static,
+                  address=management_address,
+                  netmask=management_netmask,
+                  gateway=management_gateway,
+                  broadcast=management_broadcast,
+                  network=management_network,
+                  dns_list=management_dns_list,
+                  domain=management_domain,
+                  bridge=management_bridge)
+    if service_iface != None and len(service_iface) > 0:
         add_iface(iface=service_iface,
-                dhcp=service_dhcp,
-                static=service_static,
-                address=service_address,
-                netmask=service_netmask,
-                gateway=service_gateway,
-                broadcast=service_broadcast,
-                network=service_network,
-                dns_list=service_dns_list,
-                domain=service_domain,
-                bridge=service_bridge)
-    if public_iface!=None and len(public_iface)>0:
+                  dhcp=service_dhcp,
+                  static=service_static,
+                  address=service_address,
+                  netmask=service_netmask,
+                  gateway=service_gateway,
+                  broadcast=service_broadcast,
+                  network=service_network,
+                  dns_list=service_dns_list,
+                  domain=service_domain,
+                  bridge=service_bridge)
+    if public_iface != None and len(public_iface) > 0:
         add_iface(iface=public_iface,
-                dhcp=public_dhcp,
-                static=public_static,
-                address=public_address,
-                netmask=public_netmask,
-                gateway=public_gateway,
-                broadcast=public_broadcast,
-                network=public_network,
-                dns_list=public_dns_list,
-                domain=public_domain,
-                bridge=public_bridge)
-    if storage_iface!=None and len(storage_iface)>0:
+                  dhcp=public_dhcp,
+                  static=public_static,
+                  address=public_address,
+                  netmask=public_netmask,
+                  gateway=public_gateway,
+                  broadcast=public_broadcast,
+                  network=public_network,
+                  dns_list=public_dns_list,
+                  domain=public_domain,
+                  bridge=public_bridge)
+    if storage_iface != None and len(storage_iface) > 0:
         add_iface(iface=storage_iface,
-                dhcp=storage_dhcp,
-                static=storage_static,
-                address=storage_address,
-                netmask=storage_netmask,
-                gateway=storage_gateway,
-                broadcast=storage_broadcast,
-                network=storage_network,
-                dns_list=storage_dns_list,
-                domain=storage_domain,
-                bridge=storage_bridge)
+                  dhcp=storage_dhcp,
+                  static=storage_static,
+                  address=storage_address,
+                  netmask=storage_netmask,
+                  gateway=storage_gateway,
+                  broadcast=storage_broadcast,
+                  network=storage_network,
+                  dns_list=storage_dns_list,
+                  domain=storage_domain,
+                  bridge=storage_bridge)
 
 
-def add_iface(iface="",dhcp="false",static="true",address="",netmask="",gateway="",broadcast="",network="",dns_list="", domain="", bridge="" ):
+def add_iface(iface="", dhcp="false", static="true", address="", netmask="", gateway="", broadcast="", network="",
+              dns_list="", domain="", bridge=""):
     """Update /etc/network/interfaces with info for the current scheme"""
     interfaces = sudo('cat "/etc/network/interfaces"')
 
     # Write the entry for the new interface
     interfaces += "\n \n# STARTS CONFIGURATION OF %s" % iface
     interfaces += "\nauto %s" % iface
-    if str(dhcp).lower() == "true" :
+    if str(dhcp).lower() == "true":
         interfaces += "\niface %s inet dhcp" % iface
     else:
         if str(static).lower() == "true":
             interfaces += "\niface %s inet static" % iface
-	    if len(str(address))>0:
-        	interfaces += "\n\taddress %s" % address
-    	    if len(str(netmask))>0:
-      	        interfaces += "\n\tnetmask %s" % netmask
-    	    if len(str(gateway))>0:
-       		interfaces += "\n\tgateway %s" % gateway
-    	    if len(str(broadcast))>0:
-    		interfaces += "\n\tbroadcast %s" % broadcast
-    	    if len(str(network))>0:
-    		interfaces += "\n\tnetwork %s" % network
-    	    if len(str(dns_list))>0:
-        	interfaces += "\n\tdns-nameservers %s" % dns_list
-    	    if len(str(domain))>0:
-        	interfaces += "\n\tdns-search %s" % domain
-    	    if len(str(bridge))>0:
-        	interfaces += "\n\tbridge_ports %s" % bridge
-        	interfaces += "\n\tbridge_maxwait 0"
-        	interfaces += "\n\tbridge_fd 0 "
-        	interfaces += "\n\tbridge_stp off"
+            if len(str(address)) > 0:
+                interfaces += "\n\taddress %s" % address
+            if len(str(netmask)) > 0:
+                interfaces += "\n\tnetmask %s" % netmask
+            if len(str(gateway)) > 0:
+                interfaces += "\n\tgateway %s" % gateway
+            if len(str(broadcast)) > 0:
+                interfaces += "\n\tbroadcast %s" % broadcast
+            if len(str(network)) > 0:
+                interfaces += "\n\tnetwork %s" % network
+            if len(str(dns_list)) > 0:
+                interfaces += "\n\tdns-nameservers %s" % dns_list
+            if len(str(domain)) > 0:
+                interfaces += "\n\tdns-search %s" % domain
+            if len(str(bridge)) > 0:
+                interfaces += "\n\tbridge_ports %s" % bridge
+                interfaces += "\n\tbridge_maxwait 0"
+                interfaces += "\n\tbridge_fd 0 "
+                interfaces += "\n\tbridge_stp off"
         else:
             interfaces += "\niface %s inet manual" % iface
             interfaces += "\n\tup ifconfig $IFACE 0.0.0.0 up"
@@ -371,7 +380,6 @@ def add_iface(iface="",dhcp="false",static="true",address="",netmask="",gateway=
 
     interfaces += "\n# ENDS CONFIGURATION OF %s" % iface
     sudo("echo '%s' > /etc/network/interfaces" % interfaces)
-
 
 
 def cpu():
@@ -399,29 +407,30 @@ def memory():
 
 
 def is_virtual():
-    virt =  sudo("egrep '(vmx|svm)' /proc/cpuinfo")
-    if len(virt)>0:
+    virt = sudo("egrep '(vmx|svm)' /proc/cpuinfo")
+    if len(virt) > 0:
         return "True"
     else:
         return "False"
 
 
 def iface_list():
-    ifaces =  sudo("cat /proc/net/dev | sed 's/:\(.*\)//g'").splitlines()
-    del ifaces [0]
-    del ifaces [0]
-    ifaces_list=[]
+    ifaces = sudo("cat /proc/net/dev | sed 's/:\(.*\)//g'").splitlines()
+    del ifaces[0]
+    del ifaces[0]
+    ifaces_list = []
     for x in ifaces:
         y = x.strip()
-        if (y!="lo") and not(y.startswith("vir")) and not(y.startswith("br")) and not(y.startswith("vnet")) and not(y.startswith("pan")):
+        if (y != "lo") and not (y.startswith("vir")) and not (y.startswith("br")) and not (
+        y.startswith("vnet")) and not (y.startswith("pan")):
             ifaces_list.append(y)
     puts(ifaces_list)
     return ifaces_list
 
 
 def iface_vendor(iface):
-    tmp =  sudo("lshw -short -c network | grep '%s'" % iface).splitlines()
-    vendor = tmp[len(tmp)-1][43:]
+    tmp = sudo("lshw -short -c network | grep '%s'" % iface).splitlines()
+    vendor = tmp[len(tmp) - 1][43:]
     puts(vendor)
     return vendor
 
@@ -434,9 +443,9 @@ def mounts():
         dev = {}
         device = line.split()[0]
         mountpoint = line.split()[2]
-        if (device!="none"):
-            dev['mountpoint']=mountpoint
-            dev['device']=device
+        if (device != "none"):
+            dev['mountpoint'] = mountpoint
+            dev['device'] = device
             try:
                 s = os.statvfs(line.split()[2])
                 dev['size'] = s.f_bsize * s.f_blocks
@@ -458,13 +467,13 @@ def block_devices():
     mounts = [p.split() for p in mnt]
     mountvalid = {}
     for p in mounts:
-        if (p[0]!='none'):
+        if (p[0] != 'none'):
             mountvalid[p[0]] = p
     inf = []
     for device in parts:
         dev = {}
-        if ('/dev/'+device[3] in mountvalid):
-            dev['mountpoint']=mountvalid['/dev/'+device[3]][2]
+        if ('/dev/' + device[3] in mountvalid):
+            dev['mountpoint'] = mountvalid['/dev/' + device[3]][2]
             try:
                 s = os.statvfs(dev['mountpoint'])
                 dev['size'] = s.f_bsize * s.f_blocks
@@ -472,10 +481,10 @@ def block_devices():
             except OSError:
                 print 'OSError'
         else:
-            dev['mountpoint']=''
+            dev['mountpoint'] = ''
             dev['size'] = int(device[2]) * 1024
             dev['used'] = -1
-        dev['device']='/dev/'+device[3]
+        dev['device'] = '/dev/' + device[3]
         inf.append(dev)
     puts(inf)
     return inf
@@ -487,30 +496,31 @@ def nameservers():
     inf = []
     for line in lines:
         if line.startswith("nameserver"):
-            inf.append({'nameserver':line.split(" ")[1]})
+            inf.append({'nameserver': line.split(" ")[1]})
     puts(inf)
     return inf
 
 
 def network_config():
     def getDhcpInfo(device):
-        info = {'address': 'none', 'netmask':'none', 'gateway':'none' }
-        mnt = sudo('LC_ALL=c ifconfig '+device)
+        info = {'address': 'none', 'netmask': 'none', 'gateway': 'none'}
+        mnt = sudo('LC_ALL=c ifconfig ' + device)
         match = re.search(r'inet addr:(\S+).*mask:(\S+)', mnt, re.I)
         if match:
             info['address'] = match.group(1)
             info['netmask'] = match.group(2)
         mnt = sudo('route -n ')
-        match = re.search(r'^0.0.0.0\s+(\S+).*'+re.escape(device),
-            mnt, re.I|re.M)
+        match = re.search(r'^0.0.0.0\s+(\S+).*' + re.escape(device),
+                          mnt, re.I | re.M)
         if match:
             info['gateway'] = match.group(1)
         return info
+
     inf = []
     mnt = sudo('cat /etc/network/interfaces | egrep -v "^s*(#|$)"')
     devnets = mnt.split('auto')
     for devnet in devnets:
-        if len(devnet)>0:
+        if len(devnet) > 0:
             net = devnet.splitlines()
             dev = {}
             element = net[0].strip()
@@ -527,16 +537,16 @@ def network_config():
                 dev['bond-master'] = "none"
                 for e in net:
                     params = e.strip().split(' ')
-                    if params[len(params)-1] == 'dhcp':
+                    if params[len(params) - 1] == 'dhcp':
                         dev['dhcp'] = "true"
-                    if params[len(params)-1] == 'static':
+                    if params[len(params) - 1] == 'static':
                         dev['dhcp'] = "false"
                     if params[0] == 'address':
-                        dev['address'] =  params[1]
+                        dev['address'] = params[1]
                     if params[0] == 'netmask':
-                        dev['netmask'] =  params[1]
+                        dev['netmask'] = params[1]
                     if params[0] == 'gateway':
-                        dev['gateway'] =  params[1]
+                        dev['gateway'] = params[1]
                     if params[0] == 'bridge_ports':
                         dev['virtual'] = "true"
                     if params[0] == 'bond-mode':
@@ -547,13 +557,13 @@ def network_config():
                         dev['bond-master'] = params[1]
                 if dev['dhcp'] == 'true':
                     dev.update(getDhcpInfo(dev['name']))
-            if len(dev)>0:
+            if len(dev) > 0:
                 inf.append(dev)
     puts(inf)
     return inf
 
 
-def add_host(hostname,ip):
+def add_host(hostname, ip):
     sudo('sed -i /%s/d /etc/hosts' % hostname)
     sudo('echo "%s  %s" >> /etc/hosts' % (hostname, ip))
 
