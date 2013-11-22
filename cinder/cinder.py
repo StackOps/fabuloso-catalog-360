@@ -13,7 +13,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 from fabric.api import settings, sudo
-from cuisine import package_clean, package_ensure
+from cuisine import package_clean, package_ensure, file_exists
 
 import fabuloso.utils as utils
 
@@ -128,6 +128,8 @@ def set_config_file(service_user='cinder', service_pass='stackops', auth_host='1
     sudo('cinder-manage db sync')
 
 
-def create_volume(partition='/dev/sdb1'):
-    sudo('pvcreate %s' % partition)
-    sudo('vgcreate cinder-volumes %s' % partition)
+def create_volume(partition):
+    if partition is not None:
+	if file_exists(partition):    
+	    sudo('pvcreate -y -ff %s' % partition)
+	    sudo('vgcreate cinder-volumes %s' % partition)
