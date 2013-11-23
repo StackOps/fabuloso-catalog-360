@@ -8,6 +8,8 @@ Services:
       methods:
           - install
           - set_config_file
+          - create_volume
+          - start
     - name: start
       description: Start the cinder service
       methods: 
