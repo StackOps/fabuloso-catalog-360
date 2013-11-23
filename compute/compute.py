@@ -300,6 +300,7 @@ def configure_ovs_plugin_gre(controller_host=None, compute_ip=None, mysql_userna
 
 
 def configure_local_storage(delete_content=False, set_nova_owner=True):
+    utils.set_option(NOVA_COMPUTE_CONF, 'libvirt_images_type', 'default')
     if delete_content:
         sudo('rm -fr %s' % NOVA_INSTANCES)
     stop()
@@ -308,3 +309,16 @@ def configure_local_storage(delete_content=False, set_nova_owner=True):
     if set_nova_owner:
         sudo('chown nova:nova -R %s' % NOVA_INSTANCES)
     start()
+
+def create_volume(partition='/dev/sdb1',name='nova-volume'):
+    sudo('pvcreate %s' % partition)
+    sudo('vgcreate %s %s' % (name,partition))
+
+def configure_lvm_storage(name='nova-volume',sparse='True'):
+    utils.set_option(NOVA_COMPUTE_CONF, 'libvirt_images_type', 'lvm')
+    utils.set_option(NOVA_COMPUTE_CONF, 'libvirt_images_volume_group', name)
+    utils.set_option(NOVA_COMPUTE_CONF, 'libvirt_sparse_logical_volumes', sparse)
+    start()
+
+def set_option(property='',value=''):
+    utils.set_option(NOVA_COMPUTE_CONF, property, value)
