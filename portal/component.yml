@@ -20,27 +20,3 @@ Services:
       description: Stop portal service
       methods:
           - stop
-    - name: install_nova_plugins
-      description: Install the Stackops portal nova plugins
-      methods:
-          - configure_nova_packages
-    - name: install_automation_plugins
-      description: Install the Stackops portal Automation plugins
-      methods:
-          - configure_automation_packages
-    - name: install_chargeback_plugins
-      description: Install the Stackops portal chargeback plugins
-      methods:
-          - configure_chargeback_packages
-    - name: uninstall_nova_plugins
-      description: Uninstall the Stackops portal nova plugins
-      methods:
-          - uninstall_nova_packages
-    - name: uninstall_automation_plugins
-      description: Uninstall the Stackops portal Automation plugins
-      methods:
-          - uninstall_automation_packages
-    - name: uninstall_chargeback_plugins
-      description: Uninstall the Stackops portal chargeback plugins
-      methods:
-          - uninstall_chargeback_packages
